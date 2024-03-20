@@ -1,0 +1,10 @@
+CLASE JAVA:
+    Para concetarse con la bases de datos:
+
+    Connection conexion = DriverManager.getConnection(
+					"jdbc:mysql://localhost/[database]? UseSSL=true & serverTimezone=UTC", "[usuariio]", "[contraseña]");
+
+MySql:
+
+CREATE USER '[nombre]'@'localhost' identified BY '[contraseña]'; 
+GRANT CREATE ON *.* TO '[nombre]'@'localhost'; 
