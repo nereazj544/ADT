@@ -1,5 +1,9 @@
 package EV2;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,26 +12,28 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 
+import com.mysql.cj.result.Field;
+
 public class e1 {
     public static void main(String[] args) throws SQLException {
         Scanner sc = new Scanner(System.in);
 
         try {
+            // * Conexion con MySql
             Connection conexion = DriverManager.getConnection(
                     "jdbc:mysql://localhost/slq? UseSSL=true & serverTimezone=UTC", "sql", "123");
-
-            // Listar datos de las tablas
 
             while (true) {
                 System.err.println("\n Selecciona una opcion: ");
                 System.out.println("1. Listar Datos (Usuarios).");
                 System.out.println("2. Listar Datos (Pedidos).");
-                System.out.println(
-                        "3. Introducir datos en la tabla de Usuarios.");
+                System.out.println("3. Introducir datos en la tabla de Usuarios.");
                 System.out.println("4. Introducir datos en la tabla de Pedidos");
-                System.out.println("5. Borrar (NO FUNCIONA)");
-                System.out.println("6. Actualizar (NO FUNCIONA) ");
-                System.out.println("7. EXIT");
+                System.out.println("5. Intorudcir datos desde un fichero (Usuarios)");
+                System.out.println("6. Intorudcir datos desde un fichero (Pedidos)");
+                System.out.println("7. Borrar un dato (Usuarios)");
+                System.out.println("8. Borrar un dato (Pedidos)");
+                System.out.println("9. EXIT");
 
                 int e = sc.nextInt();
                 switch (e) {
@@ -47,12 +53,21 @@ public class e1 {
                         break;
 
                     case 5:
-
+                        e1.introducirDatosFICHERO(conexion, sc, args);
                         break;
+
                     case 6:
+                        e1.introducirDatosFICHEROPedidos(conexion, sc, args);
 
                         break;
+
                     case 7:
+                        e1.borrarDatos(conexion);
+                        break;
+                    case 8:
+
+                        break;
+                    case 9:
                         System.err.println("¡¡ADIOSSSSS!!");
                         System.exit(0);
 
@@ -65,6 +80,8 @@ public class e1 {
             e.printStackTrace();
         }
     }
+
+    
 
     // * LISTAR DATOS (PEDIDOS)
     private static void listarDatosPedidos(Connection conexion) throws SQLException {
@@ -190,5 +207,118 @@ public class e1 {
         st.close();
 
     }
+
+    private static void introducirDatosFICHERO(Connection conexion, Scanner sc, String[] args)
+            throws SQLException, FileNotFoundException, Exception {
+        // ! METODO UNO CON SCANNER
+        System.out.println("INTRODUCE LA RUTA DEL FICHERO DE TXT: ");
+        String ruta = sc.nextLine();
+
+        File f = new File(ruta);
+
+        if (!f.exists()) {
+            System.err.println("El fichero no existe: " + ruta);
+            return;
+        }
+
+        Scanner leer = new Scanner(f);
+        String l;
+
+        String sql = "INSERT INTO usuarios (id, nombre, email, telefono) VALUES (?,?,?,?)";
+        PreparedStatement st = conexion.prepareStatement(sql);
+        while (leer.hasNextLine()) {
+            l = leer.nextLine();
+            String[] datos = l.split(",");
+
+            st.setString(1, datos[0]);
+            st.setString(2, datos[1]);
+            st.setString(3, datos[2]);
+            st.setString(4, datos[3]);
+
+            st.executeUpdate();
+        }
+        System.out.println("Datos insertados");
+        leer.close();
+        st.close();
+        conexion.close();
+        // ! METODO DOS CON AGRS + BUFFEREDREADER (ESTE SE MATENDRA COMENTADO).
+
+        /*
+        * if (args.length < 1) {
+            * System.err.println("Uso de una ruta");
+            * return;
+            * }
+            * String ruta = args[0];
+            * 
+            * File f = new File(ruta);
+            * 
+            * if (!f.exists()) {
+         * System.err.println("El fichero no existe: " + ruta);
+         * }
+         * 
+         * FileReader fileReader = new FileReader(f);
+         * BufferedReader br = new BufferedReader(fileReader);
+         * 
+         * String linea;
+         * String sql =
+         * "INSERT INTO usuarios (id, nombre, email, telefono) VALUES (?,?,?,?)";
+         * PreparedStatement st = conexion.prepareStatement(sql);
+         * 
+         * while ((linea = br.readLine()) != null) {
+         * String[] datos = linea.split(",");
+         * 
+         * st.setString(1, datos[0]);
+         * st.setString(2, datos[1]);
+         * st.setString(3, datos[2]);
+         * st.setString(4, datos[3]);
+         * 
+         * st.executeUpdate();
+         * }
+         * fileReader.close();
+         * br.close();
+         * st.close();
+         * 
+         */
+    }
+
+    private static void introducirDatosFICHEROPedidos(Connection conexion, Scanner sc, String[] args)
+    throws SQLException, FileNotFoundException {
+        System.out.println("INTRODUCE LA RUTA DEL FICHERO DE TXT: ");
+        String ruta = sc.nextLine();
+        
+        File f = new File(ruta);
+        
+        if (!f.exists()) {
+            System.err.println("El fichero no existe: " + ruta);
+            return;
+        }
+        
+        Scanner leer = new Scanner(f);
+        String l;
+        
+        String sql = "INSERT INTO pedidos (id, usuario_id, producto, cantidad, precio) VALUES (?,?,?,?,?)";
+        PreparedStatement st = conexion.prepareStatement(sql);
+        while (leer.hasNextLine()) {
+            l = leer.nextLine();
+            String[] datos = l.split(",");
+            
+            st.setString(1, datos[0]);
+            st.setString(2, datos[1]);
+            st.setString(3, datos[2]);
+            st.setString(4, datos[3]);
+            st.setString(5, datos[4]);
+            
+            st.executeUpdate();
+        }
+        System.out.println("Datos insertados");
+        leer.close();
+        st.close();
+        conexion.close();
+    }
+
+    private static void borrarDatos(Connection conexion) {
+        
+    }
+
 
 }
