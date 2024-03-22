@@ -9,8 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-import com.mysql.cj.result.StringValueFactory;
-import com.mysql.cj.xdevapi.PreparableStatement;
 
 public class InsertarDatosSCANNER {
     public static void main(String[] args) {
