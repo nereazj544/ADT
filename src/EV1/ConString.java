@@ -1,22 +1,26 @@
 package EV1;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class ConString {
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
         String ruta = "src\\R";
         File file = new File(ruta);
         String n = "src\\Carpeta\\DocNuevo.txt";
         String c = "src\\Carpeta";
-
-
+        String l = "src\\Carpeta\\leer.txt";
+        
+        
         while (true) {
+            Scanner sc = new Scanner(System.in);
             System.out.println("\n seleccione una opcion");
             System.out.println("1- borrar");
             System.out.println("2- crear(Documento)");
             System.out.println("3- crear(Carpeta)");
+            System.out.println("4- Leer (Documento)");
+            System.out.println("5- Leer (Contenido de una carpeta)");
 
             int e = sc.nextInt();
             switch (e) {
@@ -27,6 +31,10 @@ public class ConString {
                     crear(n);
                 case 3:
                     crearCar(c);
+                case 4:
+                    leertxt(l);
+                case 5:
+                    leercarpeta(c);
                 default:
                     break;
             }
@@ -36,6 +44,36 @@ public class ConString {
 
 
         
+    }
+    private static void leercarpeta(String c) {
+        File file = new File(c);
+
+        if (file.isDirectory()) {
+            File[] ar = file.listFiles();
+            for (File a : ar) {
+                System.out.println("\nArchivos: " + a.getName());
+            }
+        }else{
+            System.out.println("Error");
+        }
+    }
+    private static void leertxt(String l) {
+        File f = new File(l);
+        try {
+            Scanner lector = new Scanner(f);
+            while (lector.hasNextLine()) {
+                String d = lector.nextLine();
+                System.out.println(d);
+            }
+            lector.close();
+
+        }catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+         catch (Exception e) {
+            e.printStackTrace();
+        }
+    
     }
     private static void crearCar(String c) {
         File foulder = new File(c);
