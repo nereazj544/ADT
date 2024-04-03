@@ -1,6 +1,2 @@
-INSERT INTO usuarios (nombre, email, telefono) VALUES
-('Laura Martínez', 'laura@example.com', '555-1234'),
-('Carlos Rodríguez', 'carlos@example.com', '555-5678'),
-('Ana Gómez', 'ana@example.com', '555-9012');
-
-
+(7, 'Pepa', 'qwertyj@gmail.com', 98087512)
+(8, 'Pee', 'qwertyj@gmail.com', 98087512)
