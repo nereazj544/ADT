@@ -1,4 +1,4 @@
-package EV1.LeerDatos;
+package EV1;
 
 import java.io.File;
 
